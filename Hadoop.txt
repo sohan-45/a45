@@ -1,0 +1,194 @@
+#Write a code in JAVA for a simple WordCount application that counts the number of occurrences
+#of each word in a given input set using the Hadoop MapReduce framework on local-standalone
+#set-up.
+
+########## INITIALIZING SERVER
+start-all.sh (start server)
+stop-all.sh (stop-server)
+
+localhost:9870/
+
+jr hadoop ui ala tr no issues 
+
+else go to terminal and run following commands
+
+cd hadoop-3.2.3/bin/
+
+hdfs namenode -format
+
+export PDSH_RCMD_TYPE=ssh
+
+start-all.sh
+
+go to localhost:9870/
+
+if still getting error, then reboot and try again until you get the UI
+
+####################
+
+#######RUNNING PROGRAM
+
+Create new project using maven
+
+remember your package name from advanced settings
+
+delete Main.java or Main class
+
+open pom.xml and add following
+
+'''
+
+<dependencies>
+<dependency>
+ <groupId>org.apache.hadoop</groupId>
+ <artifactId>hadoop-common</artifactId>
+ <version>3.3.3</version>
+ </dependency> 
+<dependency>
+ <groupId>org.apache.hadoop</groupId>
+ <artifactId>hadoop-mapreduce-client-core</artifactId>
+ <version>3.3.3</version>
+</dependency>
+</dependencies>
+
+
+'''
+
+click on maven tab on right hand side, click on reload (first) button 
+
+create class WC_Mapper
+
+'''
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.MapReduceBase;
+import org.apache.hadoop.mapred.Mapper;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reporter;
+public class WC_Mapper extends MapReduceBase implements 
+Mapper<LongWritable,Text,Text,IntWritable>{
+ private final static IntWritable one = new IntWritable(1);
+ private Text word = new Text();
+ public void map(LongWritable key, Text value,OutputCollector<Text,IntWritable> output,
+ Reporter reporter) throws IOException{
+ String line = value.toString();
+ StringTokenizer tokenizer = new StringTokenizer(line);
+ while (tokenizer.hasMoreTokens()){
+ word.set(tokenizer.nextToken());
+ output.collect(word, one);
+ }
+ }
+}
+
+'''
+
+create class WC_Reducer
+
+'''
+
+import java.io.IOException;
+import java.util.Iterator;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.MapReduceBase;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reducer;
+import org.apache.hadoop.mapred.Reporter;
+public class WC_Reducer extends MapReduceBase implements 
+Reducer<Text,IntWritable,Text,IntWritable> {
+ public void reduce(Text key, Iterator<IntWritable> values,OutputCollector<Text,IntWritable> output,
+ Reporter reporter) throws IOException {
+ int sum=0;
+ while (values.hasNext()) {
+ sum+=values.next().get();
+ }
+ output.collect(key,new IntWritable(sum));
+ }
+}
+
+'''
+
+create class WC_Runner
+
+'''
+
+import java.io.IOException;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.FileInputFormat;
+import org.apache.hadoop.mapred.FileOutputFormat;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.TextInputFormat;
+import org.apache.hadoop.mapred.TextOutputFormat;
+public class WC_Runner {
+ public static void main(String[] args) throws IOException{
+ JobConf conf = new JobConf(WC_Runner.class);
+ conf.setJobName("WordCount");
+ conf.setOutputKeyClass(Text.class);
+ conf.setOutputValueClass(IntWritable.class);
+ conf.setMapperClass(WC_Mapper.class);
+ conf.setCombinerClass(WC_Reducer.class);
+ conf.setReducerClass(WC_Reducer.class);
+ conf.setInputFormat(TextInputFormat.class);
+ conf.setOutputFormat(TextOutputFormat.class);
+ FileInputFormat.setInputPaths(conf,new Path(args[0]));
+ FileOutputFormat.setOutputPath(conf,new Path(args[1]));
+ JobClient.runJob(conf);
+ }
+}
+
+
+'''
+
+
+go to maven tab and type 
+
+click Execute Maven Goal
+
+mvn clean 
+
+mvn install
+
+#######
+
+open terminal 
+
+##Write a code in JAVA for a simple WordCount application that counts the number of occurrences
+##of each word in a given input set using the Hadoop MapReduce framework on local-standalone
+##set-up.
+
+cd Desktop
+
+sudo nano myinput.txt
+
+add words
+
+Ctrl + O
+Enter
+Ctrl + X
+Enter
+
+hadoop fs -mkdir /input
+
+hadoop fs -put myinput.txt /input
+
+
+############
+
+open intellij ide->terminal from bottom bar and run
+
+hadoop jar target/WordCountExample-1.0-SNAPSHOT.jar org.example.WC_Runner /input/myinput.txt /output
+
+########### 
+
+run below from normal terminal to see output in terminal 
+
+hadoop fs -cat /output/part-00000
+
+or go to hadoop ui, browse file system '/' then output folder then part-00000, head the first tale

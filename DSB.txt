@@ -1,0 +1,706 @@
+####ASS1(nba.csv)####
+
+##Data Wrangling: I Perform the following operations using Python on any open source dataset (e.g., data.csv)
+
+import pandas as pd
+import numpy as np
+data=pd.read_csv("https://media.geeksforgeeks.org/wp-content/uploads/nba.csv")
+
+#data=data.replace("?",np.NaN) #v
+#data.head()
+
+perc=[.20,.40,.60,.80]
+include=['object','float','int']
+desc=data.describe(percentiles=perc,include=include)
+desc
+
+data.isnull().any().any()
+data.isnull().sum()
+avg_age = data['Age'].astype("float").mean()
+avg_age
+
+data["Age"].replace(np.nan ,avg_age, inplace=True)
+data["Age"]
+desc
+
+data.isnull().sum()
+data.dtypes      #1
+
+data[["Name"]]=data[["Name"]].astype("str")
+data.dtypes
+
+data[["Team"]]=data[["Team"]].astype("str")
+data.dtypes          #a
+
+data.isnull().sum()
+data["Name"].replace(np.nan,'New Name',inplace=True)
+data["Name"]
+
+data.isnull().sum()
+desc
+
+data["Team"].replace(np.nan,'NEW TEAM',inplace=True)
+data["Team"]
+data.isnull().sum() 
+#data[["Number"]]=data[["Number"]].astype("int")    #c
+data.dtypes
+
+data["Number"].replace(np.nan,12,inplace=True)
+data["Number"]
+data.isnull().sum()
+data.dtypes
+desc
+
+data.dtypes
+data[["Position"]]=data[["Position"]].astype("str")
+data.dtypes
+data.isnull().sum()
+data["Position"].replace(np.nan,'RP',inplace=True)
+data["Position"]
+data.dtypes
+#hieght=data[["Height"]].astype("float") #k
+data.dtypes
+avg_age
+
+data[["Height"]] = data[["Height"]].astype("str")
+data["Height"].replace(np.nan,"7.8",inplace=True)
+data.dtypes
+data["Height"]
+data.isnull().sum()
+#Weight       
+data["Weight"]
+
+data[["Weight"]] = data[["Weight"]].astype("float")
+wt=data["Weight"].mean()
+data["Weight"].replace(np.nan,wt,inplace=True)
+data["Weight"]
+
+data.isnull().sum()
+data.dtypes
+data[["College"]]=data[["College"]].astype("str")
+data.dtypes
+data.isnull().sum()
+k=85
+for i in range (k):
+ 
+ data["College"].replace(np.nan,"NEW COLLAGE",inplace=True)
+data.isnull().sum()
+
+data[["Salary"]] = data[["Salary"]].astype("float")
+data["Salary"]
+data.isnull().sum()
+j=12
+s=data["Salary"].mean()
+s
+
+for i in range (j):
+  data["Salary"].replace(np.nan,s,inplace=True)
+data["Salary"]
+#data.isnull().sum()
+#s=4842684.105381166
+df=data["Age"]
+df2=df.copy()
+df2=pd.get_dummies(df2,"Age")
+df2
+
+
+####ASS1DATASET####
+
+Name	Team	Number	Position	Age	Height	Weight	College	Salary
+Avery Bradley	Boston Celtics	0	PG	25	06-Feb	180	Texas	7730337
+Jae Crowder	Boston Celtics	99	SF	25	06-Jun	235	Marquette	6796117
+John Holland	Boston Celtics	30	SG	27	06-May	205	Boston University	
+R.J. Hunter	Boston Celtics	28	SG	22	06-May	185	Georgia State	1148640
+Jonas Jerebko	Boston Celtics	8	PF	29	06-Oct	231		5000000
+
+#######################################################################
+
+
+
+####ASS2(noDataSet)
+
+##Create an “Academic performance” dataset of students and perform the given operations using Python.
+
+pip install seaborn
+
+pip install matplotlib
+
+import pandas as pd
+import numpy as np
+import statistics
+
+data={'Name':['A','B','C','D','E',' F'],           
+      'Age':[12,17,22,18,24,30],
+      'Gender':['M','M','M','M','F','F'],
+      'Marks':[70,56,89,67,67,78],
+      'PhD':['Y','Y','N','Y','N','Y']
+      } 
+df=pd.DataFrame(data)                      #k
+df
+
+data2={'Name':['A','B','C','D','E','F'],
+      'Age':[12,17,22,18,np.NaN,30],
+      'Gender':['M','M','N/a','M','F','na'],
+      'Marks':[70,56,89,np.nan,67,78],                #c
+      'PhD':['Y','Y','N',15,'N',np.nan]
+}
+df2=pd.DataFrame(data2)
+df2
+
+print (df2['Age'])
+print(df2['Age'].isnull())
+
+print(df2['Gender'])
+print(df2['Gender'].isnull())   #a
+
+print(df2['PhD'])    #1
+print(df2['PhD'].isnull())
+
+cnt=0
+for row in df2['PhD']:
+  try:
+    int(row)
+    df2.loc[cnt,'PhD']=np.nan
+  except ValueError:
+    pass
+  cnt+=1
+print(df2['PhD'])
+print(df2['PhD'].isnull())
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.boxplot(x=df['Age'])
+
+print(np.where(df['Age']>20))
+
+fig,x=plt.subplots(figsize=(8,6))
+ax=plt.hist(df['Age'],bins=30,color='g',edgecolor='w')     #v
+plt.title('Histogram') 
+plt.show()
+
+fig,ax=plt.subplots(figsize=(5,5))
+ax.scatter(df['Age'],df['Marks'])
+
+#x-axis label
+ax.set_xlabel('Age')
+
+#y- axis label
+ax.set_ylabel('Marks')
+plt.show()
+
+df['Log_Age']=np.log(df['Age'])
+df
+
+df['Log_Age'].plot.hist(bins=5)
+
+df_scaled=df.copy()
+col=['Age','Marks']
+features=df_scaled[col]
+from sklearn.preprocessing import MinMaxScaler
+scaler=MinMaxScaler()
+df_scaled[col]=scaler.fit_transform(features.values)
+df_scaled
+
+####################################################################################
+
+$$$$$$$$$$ ASS3(loanDataSet.csv) $$$$$$$
+
+###Provide summary statistics (mean, median, minimum, maximum, standard deviation) for a
+###dataset (age, income etc.) with numeric variables grouped by one of the qualitative (categorical)
+##variable.
+
+import pandas as pd
+
+df=pd.read_csv('loan_data_set.csv')
+
+df
+
+print(df['ApplicantIncome'].mean())           
+print(df['CoapplicantIncome'].mean())
+
+print(df['ApplicantIncome'].median())
+print(df['CoapplicantIncome'].median())
+
+print(df['ApplicantIncome'].mode())
+print(df['CoapplicantIncome'].mode())
+
+print(df['ApplicantIncome'].min())
+print(df['CoapplicantIncome'].min())
+
+print(df['ApplicantIncome'].max())
+print(df['CoapplicantIncome'].max())
+
+print(df['ApplicantIncome'].std())     
+print(df['CoapplicantIncome'].std())
+
+df.describe()
+
+gk=df.groupby('Gender')
+
+gk.get_group('Male')                 
+
+gk.get_group('Female')          
+
+df.groupby(df['Gender']).ApplicantIncome.agg(['min','max','mean','median','std'])     #k
+
+$$$$$$$ ASS3 Dataset $$$$$
+
+Loan_ID	Gender	Married	Dependents	Education	Self_Employed	ApplicantIncome	CoapplicantIncome	LoanAmount	Loan_Amount_Term	Credit_History	Property_Area	Loan_Status
+LP001002	Male	No	0	Graduate	No	5849	0		360	1	Urban	Y
+LP001003	Male	Yes	1	Graduate	No	4583	1508	128	360	1	Rural	N
+LP001005	Male	Yes	0	Graduate	Yes	3000	0	66	360	1	Urban	Y
+LP001006	Male	Yes	0	Not Graduate	No	2583	2358	120	360	1	Urban	Y
+LP001008	Male	No	0	Graduate	No	6000	0	141	360	1	Urban	Y
+
+
+########################################################################################################
+
+
+$$$$$$$ ASS4( scikit-BostonDataset )$$$$$
+
+## Create a Linear Regression Model using Python/R to predict home prices using Boston Housing Dataset (https://www.kaggle.com/c/boston-housing).
+
+
+pip install scikit-learn==1.1.3
+
+from sklearn.datasets import load_boston
+boston_dataset = load_boston()
+
+print(boston_dataset.keys())
+
+import pandas as pd
+import numpy as np
+
+boston = pd.DataFrame(boston_dataset.data, columns=boston_dataset.feature_names)
+boston.head()
+
+boston['MEDV'] = boston_dataset.target
+boston.isnull().sum()
+
+X = pd.DataFrame(np.c_[boston['LSTAT'], boston['RM']], columns = ['LSTAT','RM'])
+Y = boston['MEDV']
+
+from sklearn.linear_model import LinearRegression
+
+reg = LinearRegression()
+
+from sklearn.model_selection import train_test_split
+  x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, 
+  random_state=42)
+
+reg.fit(x_train, y_train)
+
+print(reg.coef_)
+
+y_pred = reg.predict(x_test)
+print(y_pred)
+
+y_pred[2]
+y_test[0]
+
+from sklearn.metrics import mean_squared_error
+print(mean_squared_error(y_test, y_pred))
+
+
+########################################################################################################
+
+
+$$$$$$$ ASS5 ( Social_Network_Ads )$$$$$
+
+##Implement logistic regression using Python/R to perform classification on
+##Social_Network_Ads.csv dataset.
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+df=pd.read_csv('Social_Network_Ads.csv')
+
+df.head()
+
+X = df.iloc[:, [0, 1]].values  #k
+y= df.iloc[:, 2].values
+
+print(X[:3, :])
+print('-'*15)
+print(y[:3])
+
+from sklearn.model_selection import train_test_split  #c
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test) #a
+
+print(X_train[:3])
+print('-'*15)
+print(X_test[:3])
+
+from sklearn.linear_model import LogisticRegression
+classifier = LogisticRegression(random_state = 0)
+classifier.fit(X_train, y_train)
+
+y_pred = classifier.predict(X_test) #1
+
+print(X_test[:10])
+print('-'*15)
+print(y_pred[:10])
+
+print(y_pred[:20]) #v
+print(y_test[:20])
+
+from sklearn.metrics import confusion_matrix,classification_report
+cm = confusion_matrix(y_test, y_pred)
+cm
+
+cl_report=classification_report(y_test,y_pred)
+cl_report
+
+
+$$$$$$$ A5Dataset ( Social_Network_Ads )$$$$$
+
+Age	EstimatedSalary	Purchased
+19	19000	1
+35	20000	0
+26	43000	1
+27	57000	0
+19	76000	0
+27	58000	0
+
+
+
+########################################################################################################
+
+
+$$$$$$$ ASS6( iris.csv )$$$$$
+
+###1. Implement Simple Naïve Bayes classification algorithm using Python/R on iris.csv dataset. 2.
+###Compute Confusion matrix to find TP, FP, TN, FN, Accuracy, Error rate, Precision, Recall on the
+###given dataset.
+
+# Commented out IPython magic to ensure Python compatibility.
+import io
+import numpy as np
+import matplotlib.pyplot as plt
+# %matplotlib inline
+import seaborn as sns
+df=pd.read_csv("Iris.csv")
+print(df.shape)
+df
+
+print('The DataFrame contains %d rows and %d columns'%(df.shape))
+print(df.dtypes)
+print(df.info())
+print(df.head(7))
+
+features=df.iloc[:,0:4]
+print(features.head())
+
+target=df.iloc[:,5]
+print(target.head())
+
+print('The initial dataframe contained %d rows and %d columns '%(df.shape))
+print('The features matrix contains %d rows and %d columns '%(features.shape))
+print('The target vector contains %d rows and %d columns'%(np.array(target).reshape(-1,1).shape))
+
+from sklearn.naive_bayes import GaussianNB
+algorithm=GaussianNB(priors=None,var_smoothing=1e-9)
+algorithm.fit(features,target)
+
+print(algorithm.classes_)
+
+print('The Gaussain model has acheieved %.2f percent accuracy'%(algorithm.score(features,target)))
+
+observation=[[5.0,3.7,1.6,0.1]]
+predictions=algorithm.predict(observation)
+print(predictions)
+
+print(algorithm.predict_proba(observation).round())
+
+x = df.iloc[:,1:5]
+y = df.iloc[:,5:]
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size = 0.3,random_state = 0)
+
+from sklearn.metrics import confusion_matrix,classification_report
+naive_bayes = GaussianNB()
+naive_bayes.fit(x_train,y_train)
+pred = naive_bayes.predict(x_test)
+
+from sklearn.preprocessing import LabelEncoder
+cm =  confusion_matrix(y_test,pred,labels = naive_bayes.classes_)
+print(cm)
+
+print(classification_report(y_test,pred))
+
+from sklearn.metrics import confusion_matrix,ConfusionMatrixDisplay,classification_report,accuracy_score, precision_score, recall_score, f1_score
+print('\nAccuracy: {:.2f}'.format(accuracy_score(y_test,pred)))
+err_rate=1-accuracy_score(y_test,pred)
+print('Error Rate: ',err_rate)
+
+
+
+$$$$$$$ DATASET_ASS6( )$$$$$
+
+Id	SepalLengthCm	SepalWidthCm	PetalLengthCm	PetalWidthCm	Species
+1	5.1	3.5	1.4	0.2	Iris-setosa
+2	4.9	3	1.4	0.2	Iris-setosa
+3	4.7	3.2	1.3	0.2	Iris-setosa
+4	4.6	3.1	1.5	0.2	Iris-setosa
+5	5	3.6	1.4	0.2	Iris-setosa
+6	5.4	3.9	1.7	0.4	Iris-setosa
+7	4.6	3.4	1.4	0.3	Iris-setosa
+8	5	3.4	1.5	0.2	Iris-setosa
+
+
+########################################################################################################
+
+
+$$$$$$$ ASS7( noDset )$$$$$
+###1. Extract Sample document and apply following document pre-processing methods:
+###Tokenization, POS Tagging, stop words removal, Stemming and Lemmatization.
+###2. Create representation of document by calculating Term Frequency and Inverse Document
+###Frequency..
+
+#Tokenization
+import nltk
+nltk.download('popular')
+
+paragraph="""A true friend loves you unconditionally, understands you, but never judges you and always t
+The friendship of Krishna and Sudama is a great example of true friendship.
+A true friend is one who will always be there when you need someone.
+He will leave all his important work, but will never leave you alone, especially in your difficult times
+That is why it is said a friend in need is a friend indeed.
+Difficult times are the best time to realize who your true friends are.
+Blessed are the souls who have true friends. """
+
+sentences=nltk.sent_tokenize(paragraph)
+print(sentences,end=" ")
+
+words=nltk.word_tokenize(paragraph)
+print(words)
+
+#Part Of Speech Tagging
+from nltk.corpus import stopwords
+
+stop_words = set(stopwords.words('english'))
+
+for i in sentences:
+ wordsList = nltk.word_tokenize(i)
+ wordsList = [w for w in wordsList if not w in stop_words]
+ tagged = nltk.pos_tag(wordsList)
+ print(tagged)
+
+#Stop Word Removal
+for i in range (len(sentences)):
+ words=nltk.word_tokenize(sentences[i])
+ words=[word for word in words if word not in set(stopwords.words('english'))]
+ sentences[i]=' '.join(words)
+print(sentences)
+
+#Stemming
+from nltk.stem import PorterStemmer
+stemmer=PorterStemmer()
+for i in range (len(sentences)):
+ words=nltk.word_tokenize(sentences[i])
+ words=[stemmer.stem(word) for word in words if word not in set(stopwords.words('english'))]
+ sentences[i]=' '.join(words)
+print(sentences)
+
+#Lemmatization
+from nltk.stem import WordNetLemmatizer
+import re
+
+sentences=nltk.sent_tokenize(paragraph)
+lemmatizer=WordNetLemmatizer()
+
+for i in range (len(sentences)):
+ words=nltk.word_tokenize(sentences[i])
+ words=[lemmatizer.lemmatize(word) for word in words if word not in set(stopwords.words('english'))]
+ sentences[i]=' '.join(words)
+print(sentences)
+
+#Term Frequency and Inverse Document Frequency
+ps=PorterStemmer()
+wordnet=WordNetLemmatizer()
+sentences=nltk.sent_tokenize(paragraph)
+corpus=[]
+for i in range (len(sentences)):
+ review=re.sub('[^a-zA-Z]',' ',sentences[i])
+ review=review.lower()
+ review=review.split()
+ review=[wordnet.lemmatize(word) for word in review if word not in set(stopwords.words('english'))]
+ review=' '.join(review)
+ corpus.append(review)
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+cv=TfidfVectorizer()
+x=cv.fit_transform(corpus).toarray()
+print(x)
+
+########################################################################################################
+
+
+$$$$$$$ ASS8( titanic )$$$$$
+
+#1. Use the inbuilt dataset 'titanic'. The dataset contains 891 rows and contains information about
+#the passengers who boarded the unfortunate Titanic ship. Use the Seaborn library to see if we can
+#find any patterns in the data.
+#2. Write a code to check how the price of the ticket (column name: 'fare') for each passenger is
+#distributed by plotting a histogram
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("titanic.csv")
+
+df.head()
+
+df.info()
+
+df.isnull().sum()
+
+df["Age"].value_counts().head(10).plot(kind = 'pie', autopct='%1.1f%%', figsize=(8, 8)).legend()
+
+carrier_count = df["Survived"].value_counts()
+sns.set(style="darkgrid")
+data = {'carrier': carrier_count.index, 'count': carrier_count.values}
+mf = pd.DataFrame(data)                          #v
+sns.barplot(x='carrier', y='count', data=mf, alpha=0.9)
+plt.title('Frequency Distribution of survived ')
+plt.ylabel('Number of Occurrences', fontsize=12)
+plt.xlabel('survived ', fontsize=12)       #1
+plt.show()
+
+plt = df[['Embarked', 'Survived']].groupby('Embarked').mean().Survived.plot(kind='bar')
+plt.set_xlabel('Embarked')                   #a
+plt.set_ylabel('Survival Probability')
+
+plt = df[['Sex', 'Survived']].groupby('Sex').mean().Survived.plot(kind='bar')       #c
+plt.set_xlabel('Sex')
+plt.set_ylabel('Survival Probability')
+
+sns.pairplot(df,hue='Survived')
+
+df.hist(figsize=(15,12),bins = 20, color="#107009AA")           #k
+
+sns.set(rc = {'figure.figsize':(15,8)})
+sns.histplot(data=df, x="Fare")
+
+
+$$$$$$$ DatasetASS8(titanic.csv)$$$$$
+
+PassengerId	Survived	Pclass	Lname	Name	Sex	Age	SibSp	Parch	Ticket	Fare	Cabin	Embarked
+1	0	3	Braund	 Mr. Owen Harris	male	22	1	0	A/5 21171	7.25		S
+2	1	1	Cumings	 Mrs. John Bradley (Florence Briggs Thayer)	female	38	1	0	PC 17599	71.2833	C85	C
+3	1	3	Heikkinen	 Miss. Laina	female	26	0	0	STON/O2. 3101282	7.925		S
+4	1	1	Futrelle	 Mrs. Jacques Heath (Lily May Peel)	female	35	1	0	113803	53.1	C123	S
+5	0	3	Allen	 Mr. William Henry	male	35	0	0	373450	8.05		S
+6	0	3	Moran	 Mr. James	male		0	0	330877	8.4583		Q
+7	0	1	McCarthy	 Mr. Timothy J	male	54	0	0	17463	51.8625	E46	S
+8	0	3	Palsson	 Master. Gosta Leonard	male	2	3	1	349909	21.075		S
+
+
+########################################################################################################
+
+
+$$$$$$$ ASS9( sns titanic )$$$$$
+
+#1. Use the inbuilt dataset 'titanic' as used in the above problem. Plot a box plot for
+#distribution of age with respect to each gender along with the information about whether they
+#survived or not. (Column names : 'sex' and 'age').
+#2. Write observations on the inference from the above statistics.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = sns.load_dataset('titanic')
+df                                          #v
+
+df.info()
+
+sns.barplot(x='sex',y='age',data=df)                       #1
+
+sns.barplot(x='sex',y='survived',data=df)
+print("% of Male Survied :",df['survived'][df['sex']=='female'].value_counts(normalize=True)[0]*100)     #a
+print("% of Female Survied :",df['survived'][df['sex']=='male'].value_counts(normalize=True)[0]*100)
+
+sns.boxplot(x='sex', y='age', data=df, hue='survived')               #c
+
+sns.swarmplot(x='sex', y='age', data=df, hue='survived')                         #k
+
+
+$$$$$$$ DatasetASS9(titanic.csv)$$$$$
+
+PassengerId	Survived	Pclass	Lname	Name	Sex	Age	SibSp	Parch	Ticket	Fare	Cabin	Embarked
+1	0	3	Braund	 Mr. Owen Harris	male	22	1	0	A/5 21171	7.25		S
+2	1	1	Cumings	 Mrs. John Bradley (Florence Briggs Thayer)	female	38	1	0	PC 17599	71.2833	C85	C
+3	1	3	Heikkinen	 Miss. Laina	female	26	0	0	STON/O2. 3101282	7.925		S
+4	1	1	Futrelle	 Mrs. Jacques Heath (Lily May Peel)	female	35	1	0	113803	53.1	C123	S
+5	0	3	Allen	 Mr. William Henry	male	35	0	0	373450	8.05		S
+6	0	3	Moran	 Mr. James	male		0	0	330877	8.4583		Q
+7	0	1	McCarthy	 Mr. Timothy J	male	54	0	0	17463	51.8625	E46	S
+8	0	3	Palsson	 Master. Gosta Leonard	male	2	3	1	349909	21.075		S
+
+
+########################################################################################################
+
+
+$$$$$$$ ASS10( iris )$$$$$
+
+##Download the Iris flower dataset or any other dataset into a DataFrame. (e.g.,
+##https://archive.ics.uci.edu/ml/datasets/Iris ). Scan the dataset and give the inference as:
+##1. List down the features and their types (e.g., numeric, nominal) available in the
+##dataset. 2. Create a histogram for each feature in the dataset to illustrate the feature
+##distributions. 3. Create a box plot for each feature in the dataset.
+##4. Compare distributions and identify outliers.
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+from seaborn.utils import load_dataset
+df=pd.read_csv("Iris.csv")                         #v
+df.head(5)
+
+df.info()
+
+np.unique(df["Species"])              #1
+
+df.describe()                        #k
+
+# Commented out IPython magic to ensure Python compatibility.
+import matplotlib
+import matplotlib.pyplot as plt
+# %matplotlib inline
+
+df.hist()
+plt.show()
+
+df.boxplot()
+plt.show()              #a
+
+sns.histplot(data=df, stat='count')
+
+sns.boxplot(data=df)                   #c
+
+$$$$$$$ DatasetASS10(iris.csv)$$$$$
+
+
+Id	SepalLengthCm	SepalWidthCm	PetalLengthCm	PetalWidthCm	Species
+1	5.1	3.5	1.4	0.2	Iris-setosa
+2	4.9	3	1.4	0.2	Iris-setosa
+3	4.7	3.2	1.3	0.2	Iris-setosa
+4	4.6	3.1	1.5	0.2	Iris-setosa
+5	5	3.6	1.4	0.2	Iris-setosa
+6	5.4	3.9	1.7	0.4	Iris-setosa
+7	4.6	3.4	1.4	0.3	Iris-setosa
+8	5	3.4	1.5	0.2	Iris-setosa
+
